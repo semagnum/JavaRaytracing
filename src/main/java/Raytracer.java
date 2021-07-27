@@ -20,7 +20,7 @@ public class Raytracer {
         }
 
         HitRecord hitRecord;
-        if ((hitRecord = world.hit(r, 0.001, Double.MAX_VALUE)) != null) {
+        if ((hitRecord = world.hit(r, 0.001, 1000.0)) != null) {
             ScatterRecord sr = hitRecord.getMaterial().scatter(r, hitRecord);
             if (sr.isScattered()) {
                 Ray scattered = sr.getScatterRay();
@@ -44,20 +44,23 @@ public class Raytracer {
 
         // World
         HittableList world = new HittableList();
-        double R = Math.cos(Math.PI/4);
+        DiffuseMaterial material_ground = new DiffuseMaterial(new Color(0.8, 0.8, 0.0));
+        DiffuseMaterial material_center = new DiffuseMaterial(new Color(0.1, 0.2, 0.5));
+        DielectricMaterial material_left  = new DielectricMaterial(1.5);
+        MetalMaterial material_right = new MetalMaterial(new Color(0.8, 0.6, 0.2), 0.0);
 
-        DiffuseMaterial material_left  = new DiffuseMaterial(new Color(0,0,1));
-        DiffuseMaterial material_right = new DiffuseMaterial(new Color(1,0,0));
+        world.add(new Sphere(new Point3( 0.0, -100.5, -1.0), 100.0, material_ground));
+        world.add(new Sphere(new Point3( 0.0,    0.0, -1.0),   0.5, material_center));
+        world.add(new Sphere(new Point3(-1.0,    0.0, -1.0),   0.5, material_left));
+        world.add(new Sphere(new Point3(-1.0,    0.0, -1.0), -0.45, material_left));
+        world.add(new Sphere(new Point3( 1.0,    0.0, -1.0),   0.5, material_right));
 
-        world.add(new Sphere(new Point3(-R, 0, -1), R, material_left));
-        world.add(new Sphere(new Point3( R, 0, -1), R, material_right));
-
-        Camera camera = new Camera(new Point3(0,0,0), new Point3(0,0,-1), new Vector3(0,1,0), 90, aspectRatio);
+        Camera camera = new Camera(new Point3(-2,2,1), new Point3(0,0,-1), new Vector3(0,1,0), 90, aspectRatio);
 
 
         // Render
         int samplesPerPixel = 100;
-        int maxDepth = 5;
+        int maxDepth = 10;
         PrintWriter writer = null;
         Color[][] image = new Color[imageHeight][imageWidth];
 

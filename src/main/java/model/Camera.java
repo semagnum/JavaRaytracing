@@ -10,22 +10,22 @@ public class Camera {
     private final Vector3 vertical;
 
     public Camera(
-            Point3 lookfrom,
-            Point3 lookat,
+            Point3 lookFrom,
+            Point3 lookAt,
             Vector3 vup,
-            double vfov, // vertical field-of-view in degrees
-            double aspect_ratio
+            double vFov, // vertical field-of-view in degrees
+            double aspectRatio
     ) {
-        double theta = Math.toRadians(vfov);
+        double theta = Math.toRadians(vFov);
         double h = Math.tan(theta/2);
         double viewportHeight = 2.0 * h;
-        double viewportWidth = aspect_ratio * viewportHeight;
+        double viewportWidth = aspectRatio * viewportHeight;
 
-        Vector3 w = lookfrom.subtract(lookat).unitVector();
+        Vector3 w = lookFrom.subtract(lookAt).unitVector();
         Vector3 u = Vector3.cross(vup, w).unitVector();
         Vector3 v = Vector3.cross(w, u);
 
-        origin = lookfrom;
+        origin = lookFrom;
         horizontal = u.multiply(viewportWidth);
         vertical = v.multiply(viewportHeight);
         lowerLeftCorner = new Point3(origin
@@ -35,7 +35,10 @@ public class Camera {
     }
 
     public Ray getRay(double u, double v) {
-        Vector3 direction = lowerLeftCorner.add(horizontal.multiply(u)).add(vertical.multiply(v));
+        Vector3 direction = lowerLeftCorner
+                .add(horizontal.multiply(u))
+                .add(vertical.multiply(v))
+                .subtract(origin);
         return new Ray(origin, direction);
     }
 };

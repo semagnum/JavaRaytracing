@@ -24,7 +24,7 @@ public class Vector3 {
     }
 
     public Vector3 subtract(Vector3 v) {
-        return add(v.negate());
+        return new Vector3(x - v.getX(), y - v.getY(), z - v.getZ());
     }
 
     public Vector3 multiply(Vector3 v) {
@@ -36,7 +36,7 @@ public class Vector3 {
     }
 
     public Vector3 divide(double d) {
-        return multiply(1 / d);
+        return this.multiply(1 / d);
     }
 
     public double length() {
@@ -69,7 +69,7 @@ public class Vector3 {
 
     public boolean nearZero() {
         // Return true if the vector is close to zero in all dimensions.
-        double s = 1e-8;
+        double s = 1e-7;
 
         return (Math.abs(x) < s) && (Math.abs(y) < s) && (Math.abs(z) < s);
     }
@@ -78,9 +78,9 @@ public class Vector3 {
         return v.subtract(n.multiply(2*dot(v,n)));
     }
 
-    public static Vector3 refract(Vector3 uv, Vector3 n, double etai_over_etat) {
+    public static Vector3 refract(Vector3 uv, Vector3 n, double etaiOverEtat) {
         double cos_theta = Math.min(dot(uv.negate(), n), 1.0);
-        Vector3 r_out_perp =  n.multiply(cos_theta).add(uv).multiply(etai_over_etat); //etai_over_etat * (uv + cos_theta*n)
+        Vector3 r_out_perp =  n.multiply(cos_theta).add(uv).multiply(etaiOverEtat); //etai_over_etat * (uv + cos_theta*n)
         Vector3 r_out_parallel = n.multiply(-Math.sqrt(Math.abs(1.0 - r_out_perp.lengthSquared())));
         return r_out_perp.add(r_out_parallel);
     }
