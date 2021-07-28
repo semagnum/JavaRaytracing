@@ -39,4 +39,7 @@ public class RandomUtil {
         return randomInUnitSphere().unitVector();
     }
 
+    public static int randomInt(int min, int max) {
+        return (int) (randomDouble(min, max+1));
+    }
 }

@@ -5,6 +5,7 @@ import lombok.Getter;
 import model.Point3;
 import model.Ray;
 import model.Vector3;
+import model.aabb;
 import model.material.BaseMaterial;
 
 import static model.Vector3.dot;
@@ -16,7 +17,7 @@ public class Sphere extends Hittable {
     private final double radius;
     private final BaseMaterial material;
 
-    HitRecord hit(Ray r, double t_min, double t_max) {
+    public HitRecord hit(Ray r, double t_min, double t_max) {
 
         Vector3 oc = r.getOrigin().subtract(center);
         double a = r.getDirection().lengthSquared();
@@ -44,5 +45,10 @@ public class Sphere extends Hittable {
         hitRecord.setMaterial(material);
 
         return hitRecord;
+    }
+
+    public aabb boundingBox(double time0, double time1) {
+        Vector3 r = new Vector3(radius, radius, radius);
+        return new aabb(new Point3(center.subtract(r)), new Point3(center.add(r)));
     }
 }

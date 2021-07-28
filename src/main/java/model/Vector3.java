@@ -11,6 +11,19 @@ public class Vector3 {
     private final double y;
     private final double z;
 
+    public double at(int axis) {
+        switch(axis) {
+            case 0:
+                return x;
+            case 1:
+                return y;
+            case 2:
+                return z;
+            default:
+                throw new IndexOutOfBoundsException();
+        }
+    }
+
     public static Vector3 random() {
         return new Vector3(RandomUtil.randomDouble(), RandomUtil.randomDouble(), RandomUtil.randomDouble());
     }

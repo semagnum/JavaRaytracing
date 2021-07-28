@@ -1,9 +1,6 @@
 import model.*;
 import model.material.*;
-import model.obj.HitRecord;
-import model.obj.HittableList;
-import model.obj.MovingSphere;
-import model.obj.Sphere;
+import model.obj.*;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -14,7 +11,7 @@ import static util.RandomUtil.randomDouble;
 
 public class Raytracer {
 
-    private static HittableList createScene() {
+    private static Hittable createScene() {
         HittableList world = new HittableList();
 
         DiffuseMaterial ground_material = new DiffuseMaterial(new Color(0.5, 0.5, 0.5));
@@ -58,10 +55,10 @@ public class Raytracer {
         MetalMaterial material3 = new MetalMaterial(new Color(0.7, 0.6, 0.5), 0.0);
         world.add(new Sphere(new Point3(4, 1, 0), 1.0, material3));
 
-        return world;
+        return new bvhNode(world, 0.0, 1.0);
     }
 
-    private static Color rayColor(Ray r, HittableList world, int depth) {
+    private static Color rayColor(Ray r, Hittable world, int depth) {
         if (depth <= 0) {
             return new Color();
         }
@@ -86,11 +83,11 @@ public class Raytracer {
     public static void main(String[] args) {
 
         double aspectRatio = 3.0 / 2.0;
-        int imageWidth = 400;
+        int imageWidth = 600;
         int imageHeight = (int) (imageWidth / aspectRatio);
 
         // World
-        HittableList world = createScene();
+        Hittable world = createScene();
 
         Point3 lookFrom = new Point3(13,2,3);
         Point3 lookAt = new Point3(0,0,0);
@@ -102,7 +99,7 @@ public class Raytracer {
 
 
         // Render
-        int samplesPerPixel = 64;
+        int samplesPerPixel = 100;
         int maxDepth = 15;
         PrintWriter writer = null;
         Color[][] image = new Color[imageHeight][imageWidth];

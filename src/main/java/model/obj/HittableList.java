@@ -2,9 +2,12 @@ package model.obj;
 
 import lombok.Getter;
 import model.Ray;
+import model.aabb;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static model.aabb.surroundingBox;
 
 @Getter
 public class HittableList extends Hittable {
@@ -32,5 +35,19 @@ public class HittableList extends Hittable {
 
         return hitRecord;
 
+    }
+
+    public aabb boundingBox(double time0, double time1) {
+        aabb outputBox = null;
+        boolean first_box = true;
+
+        for (Hittable object : world) {
+            aabb tempBox = object.boundingBox(time0, time1);
+            if (tempBox == null) return null;
+            outputBox = first_box ? tempBox : surroundingBox(outputBox, tempBox);
+            first_box = false;
+        }
+
+        return outputBox;
     }
 }

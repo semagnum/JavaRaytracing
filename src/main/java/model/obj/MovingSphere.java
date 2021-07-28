@@ -4,9 +4,11 @@ import lombok.Getter;
 import model.Point3;
 import model.Ray;
 import model.Vector3;
+import model.aabb;
 import model.material.BaseMaterial;
 
 import static model.Vector3.dot;
+import static model.aabb.surroundingBox;
 
 @Getter
 public class MovingSphere extends Sphere {
@@ -29,7 +31,7 @@ public class MovingSphere extends Sphere {
                 .add(getCenter()));
     }
 
-    HitRecord hit(Ray r, double t_min, double t_max) {
+    public HitRecord hit(Ray r, double t_min, double t_max) {
 
         Vector3 oc = r.getOrigin().subtract(getCenter(r.getTime()));
         double a = r.getDirection().lengthSquared();
@@ -57,5 +59,12 @@ public class MovingSphere extends Sphere {
         hitRecord.setMaterial(getMaterial());
 
         return hitRecord;
+    }
+
+    public aabb boundingBox(double time0, double time1) {
+        Vector3 r = new Vector3(getRadius(), getRadius(), getRadius());
+        aabb box0 = new aabb(new Point3(getCenter(time0).subtract(r)), new Point3(getCenter(time0).add(r)));
+        aabb box1 = new aabb(new Point3(getCenter(time1).subtract(r)), new Point3(getCenter(time1).add(r)));
+        return surroundingBox(box0, box1);
     }
 }
