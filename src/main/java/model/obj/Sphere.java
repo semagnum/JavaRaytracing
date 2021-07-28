@@ -1,16 +1,16 @@
 package model.obj;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import model.Point3;
 import model.Ray;
 import model.Vector3;
 import model.material.BaseMaterial;
 
-import java.lang.Math;
-
 import static model.Vector3.dot;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class Sphere extends Hittable {
     private final Point3 center;
     private final double radius;
@@ -25,12 +25,12 @@ public class Sphere extends Hittable {
 
         double discriminant = half_b * half_b - a * c;
         if (discriminant < 0) return null;
-        double sqrtd = Math.sqrt(discriminant);
+        double sqrtD = Math.sqrt(discriminant);
 
         // Find the nearest root that lies in the acceptable range.
-        double root = (-half_b - sqrtd) / a;
+        double root = (-half_b - sqrtD) / a;
         if (root < t_min || t_max < root) {
-            root = (-half_b + sqrtd) / a;
+            root = (-half_b + sqrtD) / a;
             if (root < t_min || t_max < root)
                 return null;
         }

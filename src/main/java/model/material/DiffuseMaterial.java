@@ -1,13 +1,15 @@
 package model.material;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import model.Color;
 import model.Ray;
 import model.Vector3;
 import model.obj.HitRecord;
 import util.RandomUtil;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class DiffuseMaterial extends BaseMaterial {
     private final Color albedo;
 
@@ -20,7 +22,6 @@ public class DiffuseMaterial extends BaseMaterial {
 
         Ray scattered = new Ray(hitRecord.getP(), scatter_direction);
 
-        Color attenuation = albedo;
-        return new ScatterRecord(true, attenuation, scattered);
+        return new ScatterRecord(true, albedo, scattered);
     }
 }

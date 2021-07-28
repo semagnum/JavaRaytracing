@@ -22,9 +22,8 @@ public class MetalMaterial extends BaseMaterial {
     public ScatterRecord scatter(Ray rIn, HitRecord hitRecord) {
         Vector3 reflected = Vector3.reflect(rIn.getDirection().unitVector(), hitRecord.getNormal());
         Ray scattered = new Ray(hitRecord.getP(), reflected.add(RandomUtil.randomInUnitSphere().multiply(fuzz)));
-        Color attenuation = albedo;
         boolean isScattered = (dot(scattered.getDirection(), hitRecord.getNormal()) > 0);
-        return new ScatterRecord(isScattered, attenuation, scattered);
+        return new ScatterRecord(isScattered, albedo, scattered);
     }
 
 

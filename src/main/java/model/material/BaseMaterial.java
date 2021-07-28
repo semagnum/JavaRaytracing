@@ -1,6 +1,5 @@
 package model.material;
 
-import model.Color;
 import model.Ray;
 import model.obj.HitRecord;
 

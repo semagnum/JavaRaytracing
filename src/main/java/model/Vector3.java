@@ -15,6 +15,10 @@ public class Vector3 {
         return new Vector3(RandomUtil.randomDouble(), RandomUtil.randomDouble(), RandomUtil.randomDouble());
     }
 
+    public static Vector3 random(double min, double max) {
+        return new Vector3(RandomUtil.randomDouble(min, max), RandomUtil.randomDouble(min, max), RandomUtil.randomDouble(min, max));
+    }
+
     public Vector3 add(Vector3 v) {
         return new Vector3(x + v.getX(), y + v.getY(), z + v.getZ());
     }
@@ -80,8 +84,8 @@ public class Vector3 {
 
     public static Vector3 refract(Vector3 uv, Vector3 n, double etaiOverEtat) {
         double cos_theta = Math.min(dot(uv.negate(), n), 1.0);
-        Vector3 r_out_perp =  n.multiply(cos_theta).add(uv).multiply(etaiOverEtat); //etai_over_etat * (uv + cos_theta*n)
-        Vector3 r_out_parallel = n.multiply(-Math.sqrt(Math.abs(1.0 - r_out_perp.lengthSquared())));
-        return r_out_perp.add(r_out_parallel);
+        Vector3 rOutPerp =  n.multiply(cos_theta).add(uv).multiply(etaiOverEtat); //etai_over_etat * (uv + cos_theta*n)
+        Vector3 rOutParallel = n.multiply(-Math.sqrt(Math.abs(1.0 - rOutPerp.lengthSquared())));
+        return rOutPerp.add(rOutParallel);
     }
 }

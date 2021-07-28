@@ -1,31 +1,17 @@
 package model.obj;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import model.Ray;
-import model.Vector3;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static model.Vector3.dot;
-
-@Data
+@Getter
 public class HittableList extends Hittable {
-    private List<Hittable> world;
-
-    public HittableList(Hittable h) {
-        world = new ArrayList<>();
-        add(h);
-    }
+    private final List<Hittable> world;
 
     public HittableList() {
         world = new ArrayList<>();
-    }
-
-    public void clear() {
-        world.clear();
     }
 
     public void add(Hittable h) {

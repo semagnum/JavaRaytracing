@@ -1,18 +1,61 @@
 import model.*;
-import model.material.DielectricMaterial;
-import model.material.DiffuseMaterial;
-import model.material.MetalMaterial;
-import model.material.ScatterRecord;
+import model.material.*;
 import model.obj.HitRecord;
 import model.obj.HittableList;
 import model.obj.Sphere;
-import util.RandomUtil;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeUnit;
+
+import static util.RandomUtil.randomDouble;
 
 public class Raytracer {
+
+    private static HittableList createScene() {
+        HittableList world = new HittableList();
+
+        DiffuseMaterial ground_material = new DiffuseMaterial(new Color(0.5, 0.5, 0.5));
+        world.add(new Sphere(new Point3(0,-1000,0), 1000, ground_material));
+
+        for (int a = -11; a < 11; a++) {
+            for (int b = -11; b < 11; b++) {
+                double chooseMat = randomDouble();
+                Point3 center = new Point3(a + 0.9*randomDouble(), 0.2, b + 0.9*randomDouble());
+                Point3 p = new Point3(4, 0.2, 0);
+                if ((center.subtract(p)).length() > 0.9) {
+                    BaseMaterial sphere_material;
+
+                    if (chooseMat < 0.8) {
+                        // diffuse
+                        Color albedo = new Color(Color.random().multiply(Color.random()));
+                        sphere_material = new DiffuseMaterial(albedo);
+                    } else if (chooseMat < 0.95) {
+                        // metal
+                        Color albedo = new Color(Color.random(0.5, 1));
+                        double fuzz = randomDouble(0, 0.5);
+                        sphere_material = new MetalMaterial(albedo, fuzz);
+                    } else {
+                        // glass
+                        sphere_material = new DielectricMaterial(1.5);
+                    }
+                    world.add(new Sphere(center, 0.2, sphere_material));
+                }
+            }
+        }
+
+        DielectricMaterial material1 = new DielectricMaterial(1.5);
+        world.add(new Sphere(new Point3(0, 1, 0), 1.0, material1));
+
+        DiffuseMaterial material2 = new DiffuseMaterial(new Color(0.4, 0.2, 0.1));
+        world.add(new Sphere(new Point3(-4, 1, 0), 1.0, material2));
+
+        MetalMaterial material3 = new MetalMaterial(new Color(0.7, 0.6, 0.5), 0.0);
+        world.add(new Sphere(new Point3(4, 1, 0), 1.0, material3));
+
+        return world;
+    }
 
     private static Color rayColor(Ray r, HittableList world, int depth) {
         if (depth <= 0) {
@@ -38,31 +81,29 @@ public class Raytracer {
 
     public static void main(String[] args) {
 
-        double aspectRatio = 16.0 / 9.0;
-        int imageWidth = 400;
+        double aspectRatio = 3.0 / 2.0;
+        int imageWidth = 1200;
         int imageHeight = (int) (imageWidth / aspectRatio);
 
         // World
-        HittableList world = new HittableList();
-        DiffuseMaterial material_ground = new DiffuseMaterial(new Color(0.8, 0.8, 0.0));
-        DiffuseMaterial material_center = new DiffuseMaterial(new Color(0.1, 0.2, 0.5));
-        DielectricMaterial material_left  = new DielectricMaterial(1.5);
-        MetalMaterial material_right = new MetalMaterial(new Color(0.8, 0.6, 0.2), 0.0);
+        HittableList world = createScene();
 
-        world.add(new Sphere(new Point3( 0.0, -100.5, -1.0), 100.0, material_ground));
-        world.add(new Sphere(new Point3( 0.0,    0.0, -1.0),   0.5, material_center));
-        world.add(new Sphere(new Point3(-1.0,    0.0, -1.0),   0.5, material_left));
-        world.add(new Sphere(new Point3(-1.0,    0.0, -1.0), -0.45, material_left));
-        world.add(new Sphere(new Point3( 1.0,    0.0, -1.0),   0.5, material_right));
+        Point3 lookFrom = new Point3(13,2,3);
+        Point3 lookAt = new Point3(0,0,0);
+        Vector3 vUp = new Vector3(0,1,0);
+        double distToFocus = 10.0;
+        double aperture = 0.1;
 
-        Camera camera = new Camera(new Point3(-2,2,1), new Point3(0,0,-1), new Vector3(0,1,0), 90, aspectRatio);
+        Camera camera = new Camera(lookFrom, lookAt, vUp, 20, aspectRatio, aperture, distToFocus);
 
 
         // Render
-        int samplesPerPixel = 100;
-        int maxDepth = 10;
+        int samplesPerPixel = 64;
+        int maxDepth = 15;
         PrintWriter writer = null;
         Color[][] image = new Color[imageHeight][imageWidth];
+
+        long startTime = System.nanoTime();
 
         for (int j = imageHeight - 1; j >= 0; --j) {
             System.out.print("\r" + j + " pixel rows remaining  ");
@@ -70,15 +111,18 @@ public class Raytracer {
                 Color pixelColor = new Color(0.0, 0.0, 0.0);
 
                 for (int s = 0; s < samplesPerPixel; ++s) {
-                    double u = (i + RandomUtil.randomDouble()) / (imageWidth - 1);
-                    double v = (j + RandomUtil.randomDouble()) / (imageHeight - 1);
+                    double u = (i + randomDouble()) / (imageWidth - 1);
+                    double v = (j + randomDouble()) / (imageHeight - 1);
                     Ray r = camera.getRay(u, v);
                     pixelColor = new Color(pixelColor.add(rayColor(r, world, maxDepth)));
                 }
                 image[j][i] = pixelColor;
             }
         }
+        long endTime = System.nanoTime();
+
         System.out.println();
+        System.out.println("Time elapsed: " + TimeUnit.NANOSECONDS.toSeconds(endTime - startTime) + "s");
 
         try {
             System.out.print("Writing to file...");

@@ -15,14 +15,6 @@ public class Color extends Vector3 {
         super(v.getX(), v.getY(), v.getZ());
     }
 
-    public String write() {
-        int ir = (int) (255.999 * getX());
-        int ig = (int) (255.999 * getY());
-        int ib = (int) (255.999 * getZ());
-
-        return ir + " " + ig + " " + ib;
-    }
-
     public String write(int samples) {
 
 
