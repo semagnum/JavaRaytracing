@@ -3,6 +3,8 @@ package model;
 import lombok.Getter;
 import util.RandomUtil;
 
+import static util.RandomUtil.randomDouble;
+
 @Getter
 public class Camera {
     private final Point3 origin;
@@ -13,6 +15,8 @@ public class Camera {
     private final Vector3 v;
     private final Vector3 w;
     private final double lensRadius;
+    private final double shutterStart;
+    private final double shutterEnd;
 
     public Camera(
             Point3 lookFrom,
@@ -22,6 +26,20 @@ public class Camera {
             double aspectRatio,
             double aperture,
             double focusDist
+    ) {
+        this(lookFrom, lookAt, vup, vFov, aspectRatio, aperture, focusDist, 0, 0);
+    }
+
+    public Camera(
+            Point3 lookFrom,
+            Point3 lookAt,
+            Vector3 vup,
+            double vFov, // vertical field-of-view in degrees
+            double aspectRatio,
+            double aperture,
+            double focusDist,
+            double shutterStart,
+            double shutterEnd
     ) {
         double theta = Math.toRadians(vFov);
         double h = Math.tan(theta/2);
@@ -41,6 +59,8 @@ public class Camera {
                 .subtract(w.multiply(focusDist)));
 
         lensRadius = aperture / 2;
+        this.shutterStart = shutterStart;
+        this.shutterEnd = shutterEnd;
     }
 
     public Ray getRay(double s, double t) {
@@ -52,6 +72,6 @@ public class Camera {
                 .add(vertical.multiply(t))
                 .subtract(origin).subtract(offset);
         Point3 o = new Point3(origin.add(offset));
-        return new Ray(o, direction);
+        return new Ray(o, direction, randomDouble(shutterStart, shutterEnd));
     }
 }

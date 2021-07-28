@@ -31,7 +31,7 @@ public class DielectricMaterial extends BaseMaterial {
         else
             direction = refract(unit_direction, hitRecord.getNormal(), refraction_ratio);
 
-        Ray scattered = new Ray(hitRecord.getP(), direction);
+        Ray scattered = new Ray(hitRecord.getP(), direction, rIn.getTime());
         return new ScatterRecord(true, attenuation, scattered);
     }
 

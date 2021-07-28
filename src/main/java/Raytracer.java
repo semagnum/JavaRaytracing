@@ -2,6 +2,7 @@ import model.*;
 import model.material.*;
 import model.obj.HitRecord;
 import model.obj.HittableList;
+import model.obj.MovingSphere;
 import model.obj.Sphere;
 
 import java.io.FileNotFoundException;
@@ -31,16 +32,19 @@ public class Raytracer {
                         // diffuse
                         Color albedo = new Color(Color.random().multiply(Color.random()));
                         sphere_material = new DiffuseMaterial(albedo);
+                        Point3 center2 = new Point3(new Point3(0, randomDouble(0,.5), 0).add(center));
+                        world.add(new MovingSphere(center, 0.2, sphere_material, center2, 0.0, 1.0));
                     } else if (chooseMat < 0.95) {
                         // metal
                         Color albedo = new Color(Color.random(0.5, 1));
                         double fuzz = randomDouble(0, 0.5);
                         sphere_material = new MetalMaterial(albedo, fuzz);
+                        world.add(new Sphere(center, 0.2, sphere_material));
                     } else {
                         // glass
                         sphere_material = new DielectricMaterial(1.5);
+                        world.add(new Sphere(center, 0.2, sphere_material));
                     }
-                    world.add(new Sphere(center, 0.2, sphere_material));
                 }
             }
         }
@@ -82,7 +86,7 @@ public class Raytracer {
     public static void main(String[] args) {
 
         double aspectRatio = 3.0 / 2.0;
-        int imageWidth = 1200;
+        int imageWidth = 400;
         int imageHeight = (int) (imageWidth / aspectRatio);
 
         // World
@@ -94,7 +98,7 @@ public class Raytracer {
         double distToFocus = 10.0;
         double aperture = 0.1;
 
-        Camera camera = new Camera(lookFrom, lookAt, vUp, 20, aspectRatio, aperture, distToFocus);
+        Camera camera = new Camera(lookFrom, lookAt, vUp, 20, aspectRatio, aperture, distToFocus, 0.0, 1.0);
 
 
         // Render

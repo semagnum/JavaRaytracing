@@ -20,7 +20,7 @@ public class DiffuseMaterial extends BaseMaterial {
         if (scatter_direction.nearZero())
             scatter_direction = hitRecord.getNormal();
 
-        Ray scattered = new Ray(hitRecord.getP(), scatter_direction);
+        Ray scattered = new Ray(hitRecord.getP(), scatter_direction, rIn.getTime());
 
         return new ScatterRecord(true, albedo, scattered);
     }
