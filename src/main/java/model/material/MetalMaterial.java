@@ -10,7 +10,7 @@ import util.RandomUtil;
 import static model.Vector3.dot;
 
 @Getter
-public class MetalMaterial extends BaseMaterial {
+public class MetalMaterial extends Material {
     private final Color albedo;
     private final double fuzz;
 

@@ -33,7 +33,7 @@ public class Raytracer {
                 Point3 center = new Point3(a + 0.9*randomDouble(), 0.2, b + 0.9*randomDouble());
                 Point3 p = new Point3(4, 0.2, 0);
                 if ((center.subtract(p)).length() > 0.9) {
-                    BaseMaterial sphere_material;
+                    Material sphere_material;
 
                     if (chooseMat < 0.8) {
                         // diffuse

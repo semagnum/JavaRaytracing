@@ -12,7 +12,7 @@ import util.RandomUtil;
 
 @Getter
 @AllArgsConstructor
-public class DiffuseMaterial extends BaseMaterial {
+public class DiffuseMaterial extends Material {
     private final Texture albedo;
 
     public DiffuseMaterial(Color color) {

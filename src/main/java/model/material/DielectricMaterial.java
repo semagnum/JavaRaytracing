@@ -12,7 +12,7 @@ import static model.Vector3.*;
 
 @Getter
 @AllArgsConstructor
-public class DielectricMaterial extends BaseMaterial {
+public class DielectricMaterial extends Material {
     private final double indexOfRefraction;
 
     public ScatterRecord scatter(Ray rIn, HitRecord hitRecord) {

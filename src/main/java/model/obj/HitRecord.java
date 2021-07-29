@@ -4,7 +4,7 @@ import lombok.Data;
 import model.Point3;
 import model.Ray;
 import model.Vector3;
-import model.material.BaseMaterial;
+import model.material.Material;
 import model.texture.UV;
 
 import static model.Vector3.dot;
@@ -13,7 +13,7 @@ import static model.Vector3.dot;
 public class HitRecord {
     Point3 p;
     Vector3 normal;
-    BaseMaterial material;
+    Material material;
     UV uv;
     double t;
     boolean frontFace;

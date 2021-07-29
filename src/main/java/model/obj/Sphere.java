@@ -6,7 +6,7 @@ import model.Point3;
 import model.Ray;
 import model.Vector3;
 import model.aabb;
-import model.material.BaseMaterial;
+import model.material.Material;
 import model.texture.UV;
 
 import static model.Vector3.dot;
@@ -16,7 +16,7 @@ import static model.Vector3.dot;
 public class Sphere extends Hittable {
     private final Point3 center;
     private final double radius;
-    private final BaseMaterial material;
+    private final Material material;
 
     public HitRecord hit(Ray r, double t_min, double t_max) {
 

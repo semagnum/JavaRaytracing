@@ -5,7 +5,7 @@ import model.Point3;
 import model.Ray;
 import model.Vector3;
 import model.aabb;
-import model.material.BaseMaterial;
+import model.material.Material;
 
 import static model.Vector3.dot;
 import static model.aabb.surroundingBox;
@@ -16,7 +16,7 @@ public class MovingSphere extends Sphere {
     private final double timeStart; // time sphere starts moving
     private final double timeEnd; // time sphere ends moving
 
-    public MovingSphere(Point3 center, double radius, BaseMaterial material, Point3 center2, double timeStart, double timeEnd) {
+    public MovingSphere(Point3 center, double radius, Material material, Point3 center2, double timeStart, double timeEnd) {
         super(center, radius, material);
         this.center2 = center2;
         this.timeStart = timeStart;
