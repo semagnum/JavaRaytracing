@@ -17,6 +17,11 @@ public class HittableList extends Hittable {
         world = new ArrayList<>();
     }
 
+    public HittableList(Hittable h) {
+        world = new ArrayList<>();
+        world.add(h);
+    }
+
     public void add(Hittable h) {
         world.add(h);
     }

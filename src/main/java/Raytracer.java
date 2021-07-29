@@ -12,14 +12,12 @@ import static util.RandomUtil.randomDouble;
 
 public class Raytracer {
 
-    private static HittableList twoPerlinSpheres() {
-        HittableList objects = new HittableList();
+    private static HittableList earth() {
+        ImageTexture earth_texture = new ImageTexture("earthmap.jpg");
+        DiffuseMaterial earth_surface = new DiffuseMaterial(earth_texture);
+        Sphere globe = new Sphere(new Point3(0,0,0), 2, earth_surface);
 
-        NoiseTexture noiseTexture = new NoiseTexture(4);
-        objects.add(new Sphere(new Point3(0,-1000,0), 1000, new DiffuseMaterial(noiseTexture)));
-        objects.add(new Sphere(new Point3(0, 2, 0), 2, new DiffuseMaterial(noiseTexture)));
-
-        return objects;
+        return new HittableList(globe);
     }
 
     private static Hittable createScene() {
@@ -99,7 +97,7 @@ public class Raytracer {
         int imageHeight = (int) (imageWidth / aspectRatio);
 
         // World
-        Hittable world = twoPerlinSpheres();
+        Hittable world = earth();
 
         Point3 lookFrom = new Point3(13,2,3);
         Point3 lookAt = new Point3(0,0,0);
