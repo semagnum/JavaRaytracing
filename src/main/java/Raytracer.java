@@ -1,6 +1,9 @@
 import model.*;
 import model.material.*;
 import model.obj.*;
+import model.texture.CheckerTexture;
+import model.texture.NoiseTexture;
+import util.Perlin;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -11,10 +14,21 @@ import static util.RandomUtil.randomDouble;
 
 public class Raytracer {
 
+    private static HittableList twoPerlinSpheres() {
+        HittableList objects = new HittableList();
+
+        NoiseTexture pertext = new NoiseTexture(new Perlin(), true);
+        objects.add(new Sphere(new Point3(0,-1000,0), 1000, new DiffuseMaterial(pertext)));
+        objects.add(new Sphere(new Point3(0, 2, 0), 2, new DiffuseMaterial(pertext)));
+
+        return objects;
+    }
+
     private static Hittable createScene() {
         HittableList world = new HittableList();
 
-        DiffuseMaterial ground_material = new DiffuseMaterial(new Color(0.5, 0.5, 0.5));
+        CheckerTexture checker = new CheckerTexture(new Color(0.2, 0.3, 0.1), new Color(0.9, 0.9, 0.9));
+        DiffuseMaterial ground_material = new DiffuseMaterial(checker);
         world.add(new Sphere(new Point3(0,-1000,0), 1000, ground_material));
 
         for (int a = -11; a < 11; a++) {
@@ -87,7 +101,7 @@ public class Raytracer {
         int imageHeight = (int) (imageWidth / aspectRatio);
 
         // World
-        Hittable world = createScene();
+        Hittable world = twoPerlinSpheres();
 
         Point3 lookFrom = new Point3(13,2,3);
         Point3 lookAt = new Point3(0,0,0);
@@ -99,7 +113,7 @@ public class Raytracer {
 
 
         // Render
-        int samplesPerPixel = 100;
+        int samplesPerPixel = 50;
         int maxDepth = 15;
         PrintWriter writer = null;
         Color[][] image = new Color[imageHeight][imageWidth];

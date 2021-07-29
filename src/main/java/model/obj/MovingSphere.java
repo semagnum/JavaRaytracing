@@ -56,6 +56,7 @@ public class MovingSphere extends Sphere {
         hitRecord.setP(r.at(hitRecord.getT()));
         Vector3 outwardNormal = hitRecord.getP().subtract(getCenter(r.getTime())).divide(getRadius());
         hitRecord.setFaceNormal(r, outwardNormal);
+        hitRecord.setUv(Sphere.getUv(new Point3(outwardNormal)));
         hitRecord.setMaterial(getMaterial());
 
         return hitRecord;
