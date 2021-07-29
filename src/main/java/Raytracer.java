@@ -1,9 +1,7 @@
 import model.*;
 import model.material.*;
 import model.obj.*;
-import model.texture.CheckerTexture;
-import model.texture.NoiseTexture;
-import util.Perlin;
+import model.texture.*;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -17,9 +15,9 @@ public class Raytracer {
     private static HittableList twoPerlinSpheres() {
         HittableList objects = new HittableList();
 
-        NoiseTexture pertext = new NoiseTexture(new Perlin(), true);
-        objects.add(new Sphere(new Point3(0,-1000,0), 1000, new DiffuseMaterial(pertext)));
-        objects.add(new Sphere(new Point3(0, 2, 0), 2, new DiffuseMaterial(pertext)));
+        NoiseTexture noiseTexture = new NoiseTexture(4);
+        objects.add(new Sphere(new Point3(0,-1000,0), 1000, new DiffuseMaterial(noiseTexture)));
+        objects.add(new Sphere(new Point3(0, 2, 0), 2, new DiffuseMaterial(noiseTexture)));
 
         return objects;
     }
