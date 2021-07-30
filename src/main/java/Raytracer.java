@@ -12,12 +12,17 @@ import static util.RandomUtil.randomDouble;
 
 public class Raytracer {
 
-    private static HittableList earth() {
-        ImageTexture earth_texture = new ImageTexture("earthmap.jpg");
-        DiffuseMaterial earth_surface = new DiffuseMaterial(earth_texture);
-        Sphere globe = new Sphere(new Point3(0,0,0), 2, earth_surface);
+    private static HittableList simpleLight() {
+        HittableList objects = new HittableList();
 
-        return new HittableList(globe);
+        NoiseTexture pertext = new NoiseTexture(4);
+        objects.add(new Sphere(new Point3(0,-1000,0), 1000, new DiffuseMaterial(pertext)));
+        objects.add(new Sphere(new Point3(0,2,0), 2, new DiffuseMaterial(pertext)));
+
+        EmissiveMaterial difflight = new EmissiveMaterial(new Color(4,4,4));
+        objects.add(new XYRect(3, 5, 1, 3, -2, difflight));
+
+        return objects;
     }
 
     private static Hittable createScene() {
@@ -68,26 +73,26 @@ public class Raytracer {
         return new bvhNode(world, 0.0, 1.0);
     }
 
-    private static Color rayColor(Ray r, Hittable world, int depth) {
-        if (depth <= 0) {
+    private static Color rayColor(Ray r, Color background, Hittable world, int depth) {
+        // If we've exceeded the ray bounce limit, no more light is gathered.
+        if (depth <= 0)
             return new Color();
-        }
 
-        HitRecord hitRecord;
-        if ((hitRecord = world.hit(r, 0.001, 1000.0)) != null) {
-            ScatterRecord sr = hitRecord.getMaterial().scatter(r, hitRecord);
-            if (sr.isScattered()) {
-                Ray scattered = sr.getScatterRay();
-                Color attenuation = sr.getAttenuation();
-                return new Color(rayColor(scattered, world, depth-1).multiply(attenuation));
-            }
-            return new Color();
-        }
+        // If the ray hits nothing, return the background color.
+        HitRecord hitRecord = world.hit(r, 0.001, 100.0);
+        if (hitRecord == null)
+            return background;
 
-        // if nothing hit, get sky
-        Vector3 unit_direction = r.getDirection().unitVector();
-        double t = 0.5 * (unit_direction.getY() + 1.0);
-        return Color.skyColor(t);
+        ScatterRecord scatterRecord = hitRecord.getMaterial().scatter(r, hitRecord);
+        Ray scattered = scatterRecord.getScatterRay();
+        Color attenuation = scatterRecord.getAttenuation();
+        Color emitted = hitRecord.getMaterial().emitted(
+                hitRecord.getUv().getU(), hitRecord.getUv().getV(), hitRecord.getP());
+
+        if (!scatterRecord.isScattered())
+            return emitted;
+
+        return new Color (rayColor(scattered, background, world, depth-1).multiply(attenuation).add(emitted));
     }
 
     public static void main(String[] args) {
@@ -97,10 +102,11 @@ public class Raytracer {
         int imageHeight = (int) (imageWidth / aspectRatio);
 
         // World
-        Hittable world = earth();
+        Hittable world = simpleLight();
+        Color background = new Color();
 
-        Point3 lookFrom = new Point3(13,2,3);
-        Point3 lookAt = new Point3(0,0,0);
+        Point3 lookFrom = new Point3(26,3,6);
+        Point3 lookAt = new Point3(0,2,0);
         Vector3 vUp = new Vector3(0,1,0);
         double distToFocus = 10.0;
         double aperture = 0.1;
@@ -109,8 +115,8 @@ public class Raytracer {
 
 
         // Render
-        int samplesPerPixel = 50;
-        int maxDepth = 15;
+        int samplesPerPixel = 400;
+        int maxDepth = 40;
         PrintWriter writer = null;
         Color[][] image = new Color[imageHeight][imageWidth];
 
@@ -125,7 +131,7 @@ public class Raytracer {
                     double u = (i + randomDouble()) / (imageWidth - 1);
                     double v = (j + randomDouble()) / (imageHeight - 1);
                     Ray r = camera.getRay(u, v);
-                    pixelColor = new Color(pixelColor.add(rayColor(r, world, maxDepth)));
+                    pixelColor = new Color(pixelColor.add(rayColor(r, background, world, maxDepth)));
                 }
                 image[j][i] = pixelColor;
             }
