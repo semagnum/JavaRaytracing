@@ -31,7 +31,7 @@ public class MovingSphere extends Sphere {
                 .add(getCenter()));
     }
 
-    public HitRecord hit(Ray r, double t_min, double t_max) {
+    public HitRecord hit(Ray r, double tMin, double tMax) {
 
         Vector3 oc = r.getOrigin().subtract(getCenter(r.getTime()));
         double a = r.getDirection().lengthSquared();
@@ -44,9 +44,9 @@ public class MovingSphere extends Sphere {
 
         // Find the nearest root that lies in the acceptable range.
         double root = (-half_b - sqrtD) / a;
-        if (root < t_min || t_max < root) {
+        if (root < tMin || tMax < root) {
             root = (-half_b + sqrtD) / a;
-            if (root < t_min || t_max < root)
+            if (root < tMin || tMax < root)
                 return null;
         }
 

@@ -18,7 +18,7 @@ public class Sphere extends Hittable {
     private final double radius;
     private final Material material;
 
-    public HitRecord hit(Ray r, double t_min, double t_max) {
+    public HitRecord hit(Ray r, double tMin, double tMax) {
 
         Vector3 oc = r.getOrigin().subtract(center);
         double a = r.getDirection().lengthSquared();
@@ -31,9 +31,9 @@ public class Sphere extends Hittable {
 
         // Find the nearest root that lies in the acceptable range.
         double root = (-half_b - sqrtD) / a;
-        if (root < t_min || t_max < root) {
+        if (root < tMin || tMax < root) {
             root = (-half_b + sqrtD) / a;
-            if (root < t_min || t_max < root)
+            if (root < tMin || tMax < root)
                 return null;
         }
 

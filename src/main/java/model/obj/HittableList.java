@@ -26,13 +26,13 @@ public class HittableList extends Hittable {
         world.add(h);
     }
 
-    public HitRecord hit(Ray r, double t_min, double t_max) {
+    public HitRecord hit(Ray r, double tMin, double tMax) {
         HitRecord hitRecord = null;
         HitRecord tempRec;
-        double closest_so_far = t_max;
+        double closest_so_far = tMax;
 
         for (Hittable object : world) {
-            if ((tempRec = object.hit(r, t_min, closest_so_far)) != null) {
+            if ((tempRec = object.hit(r, tMin, closest_so_far)) != null) {
                 closest_so_far = tempRec.getT();
                 hitRecord = tempRec;
             }
